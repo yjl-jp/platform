@@ -1,12 +1,5 @@
 fileFormatVersion: 2
 guid: 552146dbb8bac6f449493bca4b69540f
-AssetOrigin:
-  serializedVersion: 1
-  productId: 155360
-  packageName: Pixel Adventure 1
-  packageVersion: 1.0
-  assetPath: Assets/Pixel Adventure 1/Assets/Main Characters/Virtual Guy/Run (32x32).png
-  uploadId: 332803
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -91,7 +84,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -106,9 +99,9 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   ignorePngGamma: 0
-  applyGammaDecoding: 1
+  applyGammaDecoding: 0
   swizzle: 50462976
-  cookieLightType: 1
+  cookieLightType: 0
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
@@ -128,7 +121,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -153,9 +146,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 62dbce8a2df3031408efe20d1f945dbd
+      spriteID: 283d0cfc9e5937360800000000000000
       internalID: 7166236263522030466
       vertices: []
       indices: 
@@ -175,9 +168,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: a44e2980ccd04544bb134b03d4c97f26
+      spriteID: 657b4304a66584220800000000000000
       internalID: 2470319409956435798
       vertices: []
       indices: 
@@ -197,9 +190,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 331f31730a8af05428188910d60cc708
+      spriteID: c8837993b9a6bf0c0800000000000000
       internalID: -4540918584354326388
       vertices: []
       indices: 
@@ -219,9 +212,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 2135f0da997407645bce3d0504b249d7
+      spriteID: 9c0629d727db922c0800000000000000
       internalID: -4455822056875728695
       vertices: []
       indices: 
@@ -241,9 +234,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 28030698c53a0ed4fbfddfcb30df2ff7
+      spriteID: f79a1cd226f6c85b0800000000000000
       internalID: -5364790588639958657
       vertices: []
       indices: 
@@ -263,9 +256,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 8e11eb06a52bb3c439feefd321b42dc2
+      spriteID: ad9657de537f10be0800000000000000
       internalID: -1512656188830553638
       vertices: []
       indices: 
@@ -285,9 +278,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 11e4ca4e401c74046b03da18c0eb5051
+      spriteID: 9021ec3a64207c9d0800000000000000
       internalID: -2754230144694611447
       vertices: []
       indices: 
@@ -307,9 +300,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 51957b1e00c7b974490513a64c5b2639
+      spriteID: 875236f1c588a6ed0800000000000000
       internalID: -2419971920513260168
       vertices: []
       indices: 
@@ -329,9 +322,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 935b5bf83f5ce504daf060f3e57568bb
+      spriteID: a3a7e2531dba69910800000000000000
       internalID: 1843850012483549754
       vertices: []
       indices: 
@@ -351,9 +344,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: c3249cd1b48c25444a3ef346b0436e6c
+      spriteID: 9dfd5ce5dd86a5300800000000000000
       internalID: 241620830004830169
       vertices: []
       indices: 
@@ -373,9 +366,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: b908b9dca8942cf40b996720144e807d
+      spriteID: 4ddb2fdde4776faf0800000000000000
       internalID: -362971539341918764
       vertices: []
       indices: 
@@ -395,9 +388,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: eb0479c8f5d58984bbf9e99975efab2a
+      spriteID: 6b9034b2ab93b3e10800000000000000
       internalID: 2178398316516280758
       vertices: []
       indices: 
@@ -407,7 +400,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: e4c4f855e5f195742b69d13bb6f5990f
     internalID: 0
     vertices: []
     indices: 
