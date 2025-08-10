@@ -8,11 +8,14 @@ public class Player : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float moveSpeed;
     [SerializeField] private float jumpForce;
+    [SerializeField] private float doubleJumpForce;
+    private bool canDoubleJump;
 
     [Header("Collision info")]
     [SerializeField] private float groundCheckDistnace;
     [SerializeField] private LayerMask whatIsGround;
     private bool isGrounded;
+    private bool isAirborne; 
 
     private float xInput;
     private bool facingRight = true;
@@ -25,6 +28,7 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
+        UpdateAirbornStatus();
 
         HandleCollision();
         HandleInput();
@@ -34,19 +38,56 @@ public class Player : MonoBehaviour
 
     }
 
+    private void UpdateAirbornStatus()
+    {
+        if (isGrounded && isAirborne)
+        {
+            HandleLanding();
+        }
+        if (!isGrounded && !isAirborne)
+        {
+            BecomeAirborne();
+        }
+    }
+
+    private void BecomeAirborne()
+    {
+        isAirborne = true;
+    }
+
+    private void HandleLanding()
+    {
+        isAirborne = false;
+        canDoubleJump = true;
+    }
+
     private void HandleInput()
     {
         xInput = Input.GetAxis("Horizontal");
 
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            JumpButton();
+        }
+    }
+    private void JumpButton()
+    {
+        if (isGrounded)
         {
             Jump();
+        }else if (canDoubleJump)
+        {
+            DoubleJump();
         }
     }
 
-
     private void Jump() => rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
 
+    private void DoubleJump()
+    {
+        canDoubleJump = false;
+        rb.linearVelocity = new Vector2(rb.linearVelocityX, doubleJumpForce);
+    }
     private void HandleCollision()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistnace, whatIsGround);
