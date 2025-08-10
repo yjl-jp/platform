@@ -13,9 +13,11 @@ public class Player : MonoBehaviour
     [SerializeField] private float groundCheckDistnace;
     [SerializeField] private LayerMask whatIsGround;
     private bool isGrounded;
-    
+
     private float xInput;
-   
+    private bool facingRight = true;
+    private int facingDir = 1;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -28,7 +30,8 @@ public class Player : MonoBehaviour
         HandleInput();
         HandleMovement();
         HandleAnimations();
-       
+        HandleFlip();
+
     }
 
     private void HandleInput()
@@ -41,7 +44,7 @@ public class Player : MonoBehaviour
         }
     }
 
-   
+
     private void Jump() => rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
 
     private void HandleCollision()
@@ -56,10 +59,24 @@ public class Player : MonoBehaviour
         anim.SetFloat("yVelocity", rb.linearVelocityY);
         anim.SetBool("isGrounded", isGrounded);
     }
-            
+
     private void HandleMovement()
     {
         rb.linearVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocity.y);
+    }
+    private void HandleFlip()
+    {
+        if (rb.linearVelocityX < 0 && facingRight || rb.linearVelocityX >0 && !facingRight)
+        {
+            Flip();
+           
+        }
+    }
+    private void Flip()
+    {
+        facingDir = facingDir * -1;
+        transform.Rotate(0, 180, 0);
+        facingRight = !facingRight;
     }
     private void OnDrawGizmos()
     {
