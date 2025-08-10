@@ -41,10 +41,8 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Jump()
-    {
-        rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
-    }
+   
+    private void Jump() => rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
 
     private void HandleCollision()
     {
@@ -55,6 +53,8 @@ public class Player : MonoBehaviour
     {
 
         anim.SetFloat("xVelocity", rb.linearVelocityX);
+        anim.SetFloat("yVelocity", rb.linearVelocityY);
+        anim.SetBool("isGrounded", isGrounded);
     }
             
     private void HandleMovement()
