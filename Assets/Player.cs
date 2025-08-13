@@ -18,6 +18,12 @@ public class Player : MonoBehaviour
     [SerializeField] private Vector2 wallJumpForce;
     private bool isWallJumping;
 
+    [Header("Knockback")]
+    [SerializeField] private float knockbackDuration = 1;
+    [SerializeField] private Vector2 knockbackPower;
+    private bool isKnocked;
+    private bool canBeKnocked;
+
 
     [Header("Collision")]
     [SerializeField] private float groundCheckDistnace;
@@ -39,8 +45,12 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
+       
         UpdateAirbornStatus();
-
+        if (isKnocked)
+        {
+            return;
+        }
         HandleCollision();
         HandleInput();
         HandleWallSlide();
@@ -51,6 +61,16 @@ public class Player : MonoBehaviour
         HandleAnimations();
        
 
+    }
+    public void Knockback()
+    {
+        if (isKnocked)
+        {
+            return;
+        }
+        StartCoroutine(KnockbackRoutine());
+        anim.SetTrigger("knockback");
+        rb.linearVelocity = new Vector2(knockbackPower.x * -facingDir, knockbackPower.y);
     }
 
     private void HandleWallSlide()
@@ -135,6 +155,15 @@ public class Player : MonoBehaviour
         isWallJumping = true;
         yield return new WaitForSeconds(wallJumpDuration);
         isWallJumping = false;
+    }
+
+    private IEnumerator KnockbackRoutine()
+    {
+        canBeKnocked = false;
+        isKnocked = true;
+        yield return new WaitForSeconds(knockbackDuration);
+        canBeKnocked = true;
+        isKnocked = false;
     }
     private void HandleCollision()
     {
