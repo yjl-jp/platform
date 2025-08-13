@@ -153,7 +153,10 @@ MonoBehaviour:
   moveSpeed: 5
   jumpForce: 14
   doubleJumpForce: 11
+  wallJumpDuration: 0.6
+  wallJumpForce: {x: 0, y: 0}
   groundCheckDistnace: 0.8
+  wallCheckDistance: 0.65
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8
@@ -167,7 +170,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: b9a1d5bbaea214b4bb94a1b2a5792236, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
