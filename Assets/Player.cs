@@ -12,9 +12,11 @@ public class Player : MonoBehaviour
     [SerializeField] private float doubleJumpForce;
     private bool canDoubleJump;
 
-    [Header("Buffer jump")]
+    [Header("Buffer & coyate jump")]
     [SerializeField] private float bufferJumpWindow = .25f;
-    private float bufferJumpPressed=-1;
+    private float bufferJumpActived=-1;
+    [SerializeField] private float coyoteJumpWindow = .5f;
+    private float coyoteJumpActivated = -1;
 
 
     [Header("Wall interactions")]
@@ -26,7 +28,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float knockbackDuration = 1;
     [SerializeField] private Vector2 knockbackPower;
     private bool isKnocked;
-    private bool canBeKnocked;
+   
 
 
     [Header("Collision")]
@@ -76,19 +78,16 @@ public class Player : MonoBehaviour
         anim.SetTrigger("knockback");
         rb.linearVelocity = new Vector2(knockbackPower.x * -facingDir, knockbackPower.y);
     }
-
-    private void HandleWallSlide()
+    private IEnumerator KnockbackRoutine()
     {
-        bool canWallSlide = isWallDetected && rb.linearVelocityY < 0;
-        float yModifer = yInput < 0 ? 1f: .05f;
-        if (canWallSlide==false)
-        {
-            return;
-        }
 
-        rb.linearVelocity = new Vector2(rb.linearVelocityX, rb.linearVelocityY * yModifer);
+        isKnocked = true;
+        yield return new WaitForSeconds(knockbackDuration);
 
+        isKnocked = false;
     }
+
+
 
     private void UpdateAirbornStatus()
     {
@@ -105,6 +104,11 @@ public class Player : MonoBehaviour
     private void BecomeAirborne()
     {
         isAirborne = true;
+        if (rb.linearVelocityY<0)
+        {
+            ActivateCoyoteJump();
+        }
+       
     }
 
     private void HandleLanding()
@@ -125,25 +129,34 @@ public class Player : MonoBehaviour
             RequestBufferJump();
         }
     }
+    #region Buffer & Coyote Jump
     private void RequestBufferJump()
     {
         if (isAirborne)
         {
-            bufferJumpPressed = Time.time;
+            bufferJumpActived = Time.time;
         }
     }
     private void AttemptBufferJump()
     {
-        if(Time.time< bufferJumpPressed + bufferJumpWindow)
+        if (Time.time < bufferJumpActived + bufferJumpWindow)
         {
-            bufferJumpPressed = 0;
+            bufferJumpActived = Time.time - 1;
             Jump();
         }
     }
+    private void ActivateCoyoteJump()=> coyoteJumpActivated = Time.time;
+    private void CancelCoyoteJump() => coyoteJumpActivated = Time.time - 1;
+    #endregion
     private void JumpButton()
     {
-        if (isGrounded)
+        bool coyoteJumpAvalible=Time.time < coyoteJumpActivated + coyoteJumpWindow;
+        if (isGrounded || coyoteJumpAvalible)
         {
+            if (coyoteJumpAvalible)
+            {
+                Debug.Log("i ve used coyote");
+            }
             Jump();
         }else if (isWallDetected && !isGrounded)
         {
@@ -153,6 +166,7 @@ public class Player : MonoBehaviour
         {
             DoubleJump();
         }
+        CancelCoyoteJump();
     }
 
     private void Jump() => rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpForce);
@@ -177,15 +191,20 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(wallJumpDuration);
         isWallJumping = false;
     }
-
-    private IEnumerator KnockbackRoutine()
+    private void HandleWallSlide()
     {
-        canBeKnocked = false;
-        isKnocked = true;
-        yield return new WaitForSeconds(knockbackDuration);
-        canBeKnocked = true;
-        isKnocked = false;
+        bool canWallSlide = isWallDetected && rb.linearVelocityY < 0;
+        float yModifer = yInput < 0 ? 1f : .05f;
+        if (canWallSlide == false)
+        {
+            return;
+        }
+
+        rb.linearVelocity = new Vector2(rb.linearVelocityX, rb.linearVelocityY * yModifer);
+
     }
+
+   
     private void HandleCollision()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistnace, whatIsGround);
