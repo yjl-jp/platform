@@ -43,6 +43,8 @@ public class Player : MonoBehaviour
     private float yInput;
     private bool facingRight = true;
     private int facingDir = 1;
+    [Header("VFX")]
+    [SerializeField] private GameObject deathVfx;
 
     private void Awake()
     {
@@ -87,7 +89,12 @@ public class Player : MonoBehaviour
 
         isKnocked = false;
     }
+    public void Die()
+    {
 
+        Destroy(gameObject);
+        GameObject newDeathVfx= Instantiate(deathVfx, transform.position, Quaternion.identity); 
+    }
 
 
     private void UpdateAirbornStatus()
