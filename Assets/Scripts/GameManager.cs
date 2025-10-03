@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
         }
             
     }
+    public void UpdateRespawnPosition(Transform newPosition)=>respawnPonit = newPosition;
+
     public void RespawnPlayer()=>StartCoroutine(RespawnCourutine());
     private IEnumerator RespawnCourutine()
     {
