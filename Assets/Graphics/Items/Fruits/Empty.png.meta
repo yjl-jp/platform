@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2133284f58ed4c84db6285637d9369d3
+guid: 7fa0f0915a5bc864db8ec0eee755ceff
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -85,7 +85,7 @@ TextureImporter:
   swizzle: 50462976
   cookieLightType: 1
   platformSettings:
-  - serializedVersion: 4
+  - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -98,7 +98,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
+  - serializedVersion: 3
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -118,14 +118,13 @@ TextureImporter:
       name: Collected_5
       rect:
         serializedVersion: 2
-        x: 160
-        y: 5
-        width: 13
+        x: 171
+        y: 12
+        width: 10
         height: 12
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 13, w: 0}
-      customData: 
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -137,7 +136,6 @@ TextureImporter:
       edges: []
       weights: []
     outline: []
-    customData: 
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
@@ -147,8 +145,6 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    spriteCustomMetadata:
-      entries: []
     nameFileIdTable:
       Collected_0: -4801923697170587870
       Collected_1: -8008818501793099674

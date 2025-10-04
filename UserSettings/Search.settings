@@ -1,9 +1,8 @@
 trackSelection = true
 refreshSearchWindowsInPlayMode = false
-pickerAdvancedUI = false
 fetchPreview = true
 defaultFlags = 0
-keepOpen = true
+keepOpen = false
 queryFolder = "Assets"
 onBoardingDoNotAskAgain = true
 showPackageIndexes = false
@@ -11,14 +10,14 @@ showStatusBar = false
 scopes = {
 }
 providers = {
-	asset = {
+	find = {
 		active = true
 		priority = 25
 		defaultAction = null
 	}
-	scene = {
+	store = {
 		active = true
-		priority = 50
+		priority = 100
 		defaultAction = null
 	}
 	adb = {
@@ -26,24 +25,19 @@ providers = {
 		priority = 2500
 		defaultAction = null
 	}
-	presets_provider = {
+	log = {
 		active = false
-		priority = -10
-		defaultAction = null
-	}
-	find = {
-		active = true
-		priority = 25
+		priority = 210
 		defaultAction = null
 	}
 	packages = {
-		active = false
+		active = true
 		priority = 90
 		defaultAction = null
 	}
-	profilermarkers = {
-		active = false
-		priority = 100
+	asset = {
+		active = true
+		priority = 25
 		defaultAction = null
 	}
 	performance = {
@@ -51,14 +45,19 @@ providers = {
 		priority = 100
 		defaultAction = null
 	}
-	store = {
+	profilermarkers = {
 		active = false
 		priority = 100
 		defaultAction = null
 	}
-	log = {
+	scene = {
+		active = true
+		priority = 50
+		defaultAction = null
+	}
+	presets_provider = {
 		active = false
-		priority = 210
+		priority = -10
 		defaultAction = null
 	}
 }
@@ -73,7 +72,7 @@ showSavedSearchPanel = false
 hideTabs = false
 expandedQueries = [
 ]
-queryBuilder = true
+queryBuilder = false
 ignoredProperties = "id;name;classname;imagecontentshash"
 helperWidgetCurrentArea = "all"
 disabledIndexers = ""
