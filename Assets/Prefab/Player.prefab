@@ -53,6 +53,7 @@ SpriteRenderer:
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -122,6 +123,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a70f1c982e344c48a4efc751cdd85c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &7761356589181421656
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8632417326840239005}
+  m_Layer: 7
+  m_Name: EnemyCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8632417326840239005
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7761356589181421656}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.639, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2897322292523340231}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8006385128288855282
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,7 +166,7 @@ GameObject:
   - component: {fileID: 3574195766951587305}
   - component: {fileID: 8374222641309721335}
   - component: {fileID: 5545925356606802984}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -155,6 +187,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2206419208495679843}
+  - {fileID: 8632417326840239005}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &3574195766951587305
@@ -240,11 +273,22 @@ MonoBehaviour:
   coyoteJumpWindow: 0.2
   wallJumpDuration: 0.6
   wallJumpForce: {x: 7, y: 14}
-  knockbackDuration: 0.7
+  knockbackDuration: 0.6
   knockbackPower: {x: 5, y: 7}
-  groundCheckDistnace: 0.8
+  groundCheckDistance: 0.8
   wallCheckDistance: 0.65
   whatIsGround:
     serializedVersion: 2
     m_Bits: 8
+  enemyCheck: {fileID: 8632417326840239005}
+  enemyCheckRadius: 0.5
+  whatIsEnemy:
+    serializedVersion: 2
+    m_Bits: 64
+  animators:
+  - {fileID: 22100000, guid: 79886fd0d187089478291ad08b2663f9, type: 2}
+  - {fileID: 22100000, guid: d982f12b72da97a49bc29db46768ca43, type: 2}
+  - {fileID: 22100000, guid: 4695a1a1eae288742ac1759ef66864cf, type: 2}
+  - {fileID: 22100000, guid: 49163c4694977794fb039ab3a7f81e7b, type: 2}
   deathVfx: {fileID: 6536056472138906537, guid: 2d31a91cc9973a14ca77d4fb69f6e545, type: 3}
+  skinId: 0

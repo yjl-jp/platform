@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FinishPoint : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class FinishPoint : MonoBehaviour
         if (player != null)
         {
             anim.SetTrigger("activate");
-            Debug.Log("You completed the level!");
+            GameManager.instance.LevelFinished();
         }
     }
 }

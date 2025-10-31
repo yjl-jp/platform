@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    private DifficultyType gameDifficulty;
+    private GameManager gameManager;
+
     private Rigidbody2D rb;
     private Animator anim;
     private CapsuleCollider2D cd;
@@ -52,8 +55,10 @@ public class Player : MonoBehaviour
     private bool facingRight = true;
     private int facingDir = 1;
 
-    [Header("VFX")]
+    [Header("Player Visuals")]
+    [SerializeField] private AnimatorOverrideController[] animators;
     [SerializeField] private GameObject deathVfx;
+    [SerializeField] private int skinId;
 
     private void Awake()
     {
@@ -65,9 +70,14 @@ public class Player : MonoBehaviour
     private void Start()
     {
         defaultGravityScale = rb.gravityScale;
+        gameManager = GameManager.instance;
+
+        UpdateGameDifficulty();
         RespawnFinished(false);
+        UpdateSkin();
     }
 
+   
 
     private void Update()
     { 
@@ -90,6 +100,48 @@ public class Player : MonoBehaviour
         HandleFlip();
         HandleCollision();
         HandleAnimations();
+    }
+
+    public void Damage()
+    {
+        if (gameDifficulty == DifficultyType.Normal)
+        {
+
+            if (gameManager.FruitsCollected() <= 0)
+            {
+                Die();
+                gameManager.RestartLevel();
+            }
+            else
+                gameManager.RemoveFruit();
+
+            return;
+        }
+
+        if (gameDifficulty == DifficultyType.Hard)
+        {
+            Die();
+            gameManager.RestartLevel();
+        }
+    }
+
+
+    private void UpdateGameDifficulty()
+    {
+        DifficultyManager difficultyManager = DifficultyManager.instance;
+
+        if (difficultyManager != null)
+            gameDifficulty = difficultyManager.difficulty;
+    }
+
+    public void UpdateSkin()
+    {
+        SkinManager skinManager = SkinManager.instance;
+
+        if (skinManager == null)
+            return;
+
+        anim.runtimeAnimatorController = animators[skinManager.choosenSkinId];
     }
 
     private void HandleEnemyDetection()
