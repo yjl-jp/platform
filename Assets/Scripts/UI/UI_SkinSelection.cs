@@ -55,6 +55,7 @@ public class UI_SkinSelection : MonoBehaviour
             mainMenuUI.SwitchUI(levelSelectionUI.gameObject);
         }
 
+        AudioManager.instance.PlaySFX(4);
 
         UpdateSkinDisplay();
     }
@@ -66,6 +67,8 @@ public class UI_SkinSelection : MonoBehaviour
         if (skinIndex > maxIndex)
             skinIndex = 0;
 
+        AudioManager.instance.PlaySFX(4);
+
         UpdateSkinDisplay();
     }
 
@@ -75,6 +78,8 @@ public class UI_SkinSelection : MonoBehaviour
 
         if (skinIndex < 0)
             skinIndex = maxIndex;
+
+        AudioManager.instance.PlaySFX(4);
 
         UpdateSkinDisplay();
     }
@@ -110,11 +115,14 @@ public class UI_SkinSelection : MonoBehaviour
     {
         if (HaveEnoughFruits(skinList[index].skinPrice) == false)
         {
+            AudioManager.instance.PlaySFX(6);
             Debug.Log("Not enough fruits");
             return;
         }
 
 
+
+        AudioManager.instance.PlaySFX(10);
         string skinName = skinList[skinIndex].skinName;
         skinList[skinIndex].unlocked = true;
 

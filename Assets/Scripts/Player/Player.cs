@@ -156,6 +156,7 @@ public class Player : MonoBehaviour
             Enemy newEnemy = enemy.GetComponent<Enemy>();
             if (newEnemy != null)
             {
+                AudioManager.instance.PlaySFX(1);
                 newEnemy.Die();
                 Jump();
             }
@@ -170,6 +171,8 @@ public class Player : MonoBehaviour
             rb.gravityScale = defaultGravityScale;
             canBeControlled = true;
             cd.enabled = true;
+
+            AudioManager.instance.PlaySFX(11);
         }
         else
         {
@@ -190,6 +193,7 @@ public class Player : MonoBehaviour
         if(isKnocked)
             return;
 
+        AudioManager.instance.PlaySFX(9);
         CameraManager.instance.ScreenShake(knockbackDir);
         StartCoroutine(KnockbackRoutine());
         
@@ -209,6 +213,8 @@ public class Player : MonoBehaviour
 
     public void Die()
     {
+        AudioManager.instance.PlaySFX(0);
+
         GameObject newDeathVfx = Instantiate(deathVfx,transform.position,Quaternion.identity);
         Destroy(gameObject);
     }
@@ -309,9 +315,14 @@ public class Player : MonoBehaviour
 
 
 
-    private void Jump() => rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+    private void Jump()
+    {
+        AudioManager.instance.PlaySFX(3);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+    }
     private void DoubleJump()
     {
+        AudioManager.instance.PlaySFX(3);
         StopCoroutine(WallJumpRoutine());
         isWallJumping = false;
         canDoubleJump = false;
@@ -320,6 +331,8 @@ public class Player : MonoBehaviour
 
     private void WallJump()
     {
+        AudioManager.instance.PlaySFX(12);
+
         canDoubleJump = true;
         rb.linearVelocity = new Vector2(wallJumpForce.x * -facingDir, wallJumpForce.y);
 
