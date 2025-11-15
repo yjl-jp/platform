@@ -1,13 +1,19 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class UI_MainMenu : MonoBehaviour
 {
+
+
+    [SerializeField] private GameObject lastSelected;
+    private DefaultInputActions defaultInput;
     private UI_FadeEffect fadeEffect;
     public string FirstLevelName;
 
-    
+
     [SerializeField] private GameObject[] uiElements;
 
     [SerializeField] private GameObject continueButton;
@@ -21,14 +27,38 @@ public class UI_MainMenu : MonoBehaviour
     private void Awake()
     {
         fadeEffect = GetComponentInChildren<UI_FadeEffect>();
-    }
 
+        defaultInput = new DefaultInputActions();
+    }
     private void Start()
     {
         if (HasLevelProgression())
             continueButton.SetActive(true);
 
         fadeEffect.ScreenFade(0, 1.5f);
+    }
+
+    private void OnEnable()
+    {
+        defaultInput.Enable();
+        defaultInput.UI.Navigate.performed += ctx => UpdateSelected();
+    }
+
+    private void OnDisable()
+    {
+        defaultInput.Disable();
+        defaultInput.UI.Navigate.performed -= ctx => UpdateSelected();
+    }
+
+    public void UpdateLastSelected(GameObject newLastSelected)
+    {
+        lastSelected = newLastSelected;
+    }
+
+    private void UpdateSelected()
+    {
+        if (EventSystem.current.currentSelectedGameObject == null)
+            EventSystem.current.SetSelectedGameObject(lastSelected);
     }
 
     public void SwitchUI(GameObject uiToEnable)
@@ -45,7 +75,7 @@ public class UI_MainMenu : MonoBehaviour
 
     public void NewGame()
     {
-        fadeEffect.ScreenFade(1, 1.5f,LoadLevelScene);
+        fadeEffect.ScreenFade(1, 1.5f, LoadLevelScene);
         AudioManager.instance.PlaySFX(4);
     }
 
@@ -60,7 +90,7 @@ public class UI_MainMenu : MonoBehaviour
 
     public void ContinueGame()
     {
-        int difficultyIndex =  PlayerPrefs.GetInt("GameDifficulty",1);
+        int difficultyIndex = PlayerPrefs.GetInt("GameDifficulty", 1);
         int levelToLoad = PlayerPrefs.GetInt("ContinueLevelNumber", 0);
         int lastSavedSkin = PlayerPrefs.GetInt("LastUsedSkin");
 

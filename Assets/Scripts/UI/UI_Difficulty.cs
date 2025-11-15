@@ -1,8 +1,22 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class UI_Difficulty : MonoBehaviour
 {
+    private UI_MainMenu mainMenu;
+    [SerializeField] private GameObject firstSelected;
     private DifficultyManager difficultyManager;
+
+    private void Awake()
+    {
+        mainMenu = GetComponentInParent<UI_MainMenu>();
+    }
+
+    private void OnEnable()
+    {
+        mainMenu.UpdateLastSelected(firstSelected);
+        EventSystem.current.SetSelectedGameObject(firstSelected);
+    }
 
     private void Start()
     {

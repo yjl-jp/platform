@@ -1,19 +1,39 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class UI_LevelSelection : MonoBehaviour
 {
+    private UI_MainMenu mainMenuUI;
+    [SerializeField] private GameObject firstSelected;
+
     [SerializeField] private UI_LevelButton buttonPrefab;
     [SerializeField] private Transform buttonsParent;
 
     [SerializeField] private bool[] levelsUnlocked;
 
-    private void Start()
+    private void Awake()
     {
+        mainMenuUI = GetComponentInParent<UI_MainMenu>();
+
         LoadLevelsInfo();
         CreateLevelButtons();
     }
 
+
+    private void OnEnable()
+    {
+        mainMenuUI.UpdateLastSelected(firstSelected);
+
+        GameObject firstLevelButton = buttonsParent.GetChild(0).gameObject;
+
+        if(firstLevelButton != null )
+            EventSystem.current.SetSelectedGameObject(firstLevelButton);
+        else
+            EventSystem.current.SetSelectedGameObject(firstSelected);
+    }
+
+   
     private void CreateLevelButtons()
     {
         int levelsAmount = SceneManager.sceneCountInBuildSettings - 1;

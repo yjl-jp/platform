@@ -1,5 +1,7 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 [System.Serializable]
 public struct Skin
@@ -11,6 +13,10 @@ public struct Skin
 
 public class UI_SkinSelection : MonoBehaviour
 {
+    [SerializeField] private GameObject firstSelected;
+    [Space]
+
+    private DefaultInputActions defaultInput;
     private UI_LevelSelection levelSelectionUI;
     private UI_MainMenu mainMenuUI;
     [SerializeField] private Skin[] skinList;
@@ -24,13 +30,45 @@ public class UI_SkinSelection : MonoBehaviour
     [SerializeField] private TextMeshProUGUI priceText;
     [SerializeField] private TextMeshProUGUI bankText;
 
-    private void Start()
+    [Space]
+    [SerializeField] private float inputCooldown = .1f;
+    private float lastTimeInput;
+    private void Awake()
     {
         LoadSkinUnlocks();
         UpdateSkinDisplay();
 
         mainMenuUI = GetComponentInParent<UI_MainMenu>();
         levelSelectionUI = mainMenuUI.GetComponentInChildren<UI_LevelSelection>(true);
+        defaultInput = new DefaultInputActions();
+    }
+
+    private void OnEnable()
+    {
+        defaultInput.Enable();
+        mainMenuUI.UpdateLastSelected(firstSelected);
+        EventSystem.current.SetSelectedGameObject(firstSelected);
+
+        defaultInput.UI.Navigate.performed += ctx => SwitchSkinWithNavigation(ctx);
+ 
+    }
+
+    private void OnDisable()
+    {
+        defaultInput.Disable();
+        defaultInput.UI.Navigate.performed -= ctx => SwitchSkinWithNavigation(ctx);
+    }
+
+    private void SwitchSkinWithNavigation(InputAction.CallbackContext ctx)
+    {
+        if (Time.time - lastTimeInput < inputCooldown)
+            return;
+
+        if (ctx.ReadValue<Vector2>().x <= -1)
+            PreviousSkin();
+
+        if (ctx.ReadValue<Vector2>().x >= 1)
+            NextSkin();
     }
 
     private void LoadSkinUnlocks()
@@ -62,6 +100,7 @@ public class UI_SkinSelection : MonoBehaviour
 
     public void NextSkin()
     {
+        lastTimeInput = Time.time;
         skinIndex++;
 
         if (skinIndex > maxIndex)
@@ -74,6 +113,7 @@ public class UI_SkinSelection : MonoBehaviour
 
     public void PreviousSkin()
     {
+        lastTimeInput = Time.time;
         skinIndex--;
 
         if (skinIndex < 0)

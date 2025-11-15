@@ -1,9 +1,14 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class UI_InGame : MonoBehaviour
 {
+    [SerializeField] private GameObject firstSelected;
+
+    private PlayerInput playerInput;
+    private Player player;
     public static UI_InGame instance;
     public UI_FadeEffect fadeEffect { get; private set; } // read-only
 
@@ -18,6 +23,21 @@ public class UI_InGame : MonoBehaviour
         instance = this;
 
         fadeEffect = GetComponentInChildren<UI_FadeEffect>();
+        playerInput = new PlayerInput();
+    }
+
+    private void OnEnable()
+    {
+        playerInput.Enable();
+        playerInput.UI.Pause.performed += ctx => PauseButton();
+        playerInput.UI.Navigate.performed += ctx => UpdateSelected();
+    }
+
+    private void OnDisable()
+    {
+        playerInput.Disable();
+        playerInput.UI.Pause.performed -= ctx => PauseButton();
+        playerInput.UI.Navigate.performed -= ctx => UpdateSelected();
     }
 
     private void Start()
@@ -31,20 +51,37 @@ public class UI_InGame : MonoBehaviour
             PauseButton();
     }
 
+    private void UpdateSelected()
+    {
+        if (EventSystem.current.currentSelectedGameObject == null)
+            EventSystem.current.SetSelectedGameObject(firstSelected);
+    }
+
     public void PauseButton()
     {
+        player = PlayerManager.instance.player;
+
         if (isPaused)
-        {
-            isPaused = false;
-            Time.timeScale = 1;
-            pauseUI.SetActive(false);
-        }
+            UnpauseTheGame();
         else
-        {
-            isPaused = true;
-            Time.timeScale = 0;
-            pauseUI.SetActive(true);
-        }
+            PauseTheGame();
+    }
+
+    private void PauseTheGame()
+    {
+        EventSystem.current.SetSelectedGameObject(firstSelected);
+        player.playerInput.Disable();
+        isPaused = true;
+        Time.timeScale = 0;
+        pauseUI.SetActive(true);
+    }
+
+    private void UnpauseTheGame()
+    {
+        player.playerInput.Enable();
+        isPaused = false;
+        Time.timeScale = 1;
+        pauseUI.SetActive(false);
     }
 
     public void GoToMainMenuButton()

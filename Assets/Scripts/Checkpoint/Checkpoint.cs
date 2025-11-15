@@ -29,6 +29,6 @@ public class Checkpoint : MonoBehaviour
     {
         active = true;
         anim.SetTrigger("activate");
-        GameManager.instance.UpdateRespawnPosition(transform);
+        PlayerManager.instance.UpdateRespawnPosition(transform);
     }
 }

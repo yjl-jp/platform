@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private DifficultyType gameDifficulty;
+    [SerializeField] private GameObject fruitDrop;
+    [SerializeField] private DifficultyType gameDifficulty;
     private GameManager gameManager;
 
     private Rigidbody2D rb;
     private Animator anim;
     private CapsuleCollider2D cd;
+
+    public PlayerInput playerInput { get; private set; }
+    private Vector2 moveInput;
+
 
     private bool canBeControlled = false;
 
@@ -49,8 +54,6 @@ public class Player : MonoBehaviour
     private bool isAirborne;
     private bool isWallDetected;
 
-    private float xInput;
-    private float yInput;
 
     private bool facingRight = true;
     private int facingDir = 1;
@@ -58,6 +61,7 @@ public class Player : MonoBehaviour
     [Header("Player Visuals")]
     [SerializeField] private AnimatorOverrideController[] animators;
     [SerializeField] private GameObject deathVfx;
+    [SerializeField] private ParticleSystem dustFx;
     [SerializeField] private int skinId;
 
     private void Awake()
@@ -65,6 +69,26 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         cd = GetComponent<CapsuleCollider2D>();
         anim = GetComponentInChildren<Animator>();
+
+        playerInput = new PlayerInput();
+    }
+
+    private void OnEnable()
+    {
+        playerInput.Enable();
+
+        playerInput.Player.Jump.performed += ctx => JumpButton();
+        playerInput.Player.Movement.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        playerInput.Player.Movement.canceled += ctx => moveInput = Vector2.zero;
+    }
+
+    private void OnDisable()
+    {
+        playerInput.Disable();
+
+        playerInput.Player.Jump.performed -= ctx => JumpButton();
+        playerInput.Player.Movement.performed -= ctx => moveInput = ctx.ReadValue<Vector2>();
+        playerInput.Player.Movement.canceled -= ctx => moveInput = Vector2.zero;
     }
 
     private void Start()
@@ -94,7 +118,7 @@ public class Player : MonoBehaviour
             return;
 
         HandleEnemyDetection();
-        HandleInput();
+        //HandleInput();
         HandleWallSlide();
         HandleMovement();
         HandleFlip();
@@ -113,7 +137,10 @@ public class Player : MonoBehaviour
                 gameManager.RestartLevel();
             }
             else
+            {
+                ObjectCreator.instance.CreateObject(fruitDrop, transform,true);
                 gameManager.RemoveFruit();
+            }
 
             return;
         }
@@ -126,6 +153,7 @@ public class Player : MonoBehaviour
     }
 
 
+    
     private void UpdateGameDifficulty()
     {
         DifficultyManager difficultyManager = DifficultyManager.instance;
@@ -254,6 +282,8 @@ public class Player : MonoBehaviour
 
     private void HandleLanding()
     {
+        dustFx.Play();
+
         isAirborne = false;
         canDoubleJump = true;
 
@@ -262,15 +292,15 @@ public class Player : MonoBehaviour
 
     private void HandleInput()
     {
-        xInput = Input.GetAxisRaw("Horizontal");
-        yInput = Input.GetAxisRaw("Vertical");
+        //xInput = Input.GetAxisRaw("Horizontal");
+        //yInput = Input.GetAxisRaw("Vertical");
 
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            JumpButton();
-            RequestBufferJump();
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    JumpButton();
+        //    RequestBufferJump();
+        //}
     }
 
     #region Coyote & Buffer Jump
@@ -317,12 +347,16 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
+        dustFx.Play();
         AudioManager.instance.PlaySFX(3);
+
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
     }
     private void DoubleJump()
     {
+        dustFx.Play();
         AudioManager.instance.PlaySFX(3);
+
         StopCoroutine(WallJumpRoutine());
         isWallJumping = false;
         canDoubleJump = false;
@@ -331,6 +365,7 @@ public class Player : MonoBehaviour
 
     private void WallJump()
     {
+        dustFx.Play();
         AudioManager.instance.PlaySFX(12);
 
         canDoubleJump = true;
@@ -355,11 +390,10 @@ public class Player : MonoBehaviour
     private void HandleWallSlide()
     {
         bool canWallSlide = isWallDetected && rb.linearVelocity.y < 0;
-        float yModifer = yInput < 0 ? 1 : .05f;
+        float yModifer = moveInput.y < 0 ? 1 : .05f;
 
         if (canWallSlide == false)
             return;
-
 
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * yModifer);
     }
@@ -386,12 +420,12 @@ public class Player : MonoBehaviour
         if (isWallJumping)
             return;
 
-        rb.linearVelocity = new Vector2(xInput * moveSpeed, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
     }
 
     private void HandleFlip()
     {
-        if (xInput < 0 && facingRight || xInput > 0 && !facingRight)
+        if (moveInput.x < 0 && facingRight || moveInput.x > 0 && !facingRight)
             Flip();
     }
 
