@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -8,9 +8,11 @@ using UnityEngine.SceneManagement;
 public class UI_InGame : MonoBehaviour
 {
     [SerializeField] private GameObject firstSelected;
+    public static event Action OnJumpPressed;
 
-    private PlayerInputSet playerInput;
+    private PlayerInput playerInput;
     private List<Player> playerList;
+    private Player player;
     public static UI_InGame instance;
     public UI_FadeEffect fadeEffect { get; private set; } // read-only
 
@@ -26,7 +28,7 @@ public class UI_InGame : MonoBehaviour
         instance = this;
 
         fadeEffect = GetComponentInChildren<UI_FadeEffect>();
-        playerInput = new PlayerInputSet();
+        playerInput = new PlayerInput();
     }
 
     private void OnEnable()
@@ -45,20 +47,9 @@ public class UI_InGame : MonoBehaviour
 
     private void Start()
     {
-        /* fadeEffect.ScreenFade(0, 1);
-         GameObject pressJoinText = FindFirstObjectByType<UI_TextBlinkEffect>().gameObject;
-         PlayerManager.instance.objectsToDisable.Add(pressJoinText);*/
-        if (fadeEffect != null)
-        {
-            fadeEffect.ScreenFade(0, 1);
-        }
-
-        // 
-        var pressJoin = FindFirstObjectByType<UI_TextBlinkEffect>();
-        if (pressJoin != null && PlayerManager.instance != null)
-        {
-            PlayerManager.instance.objectsToDisable.Add(pressJoin.gameObject);
-        }
+        fadeEffect.ScreenFade(0, 1);
+        GameObject pressJoinText = FindFirstObjectByType<UI_JoinButton>().gameObject;
+        PlayerManager.instance.objectsToDisable.Add(pressJoinText);
     }
 
     private void Update()
@@ -83,12 +74,19 @@ public class UI_InGame : MonoBehaviour
             PauseTheGame();
     }
 
+    public void JumpButton()
+    {
+        OnJumpPressed?.Invoke();
+    }
+
+    public void SetNewPlayer(Player newPlayer) => player = newPlayer;
+
     private void PauseTheGame()
     {
-        foreach (var player in playerList)
-        {
-            player.playerInput.Disable();
-        }
+        //foreach (var player in playerList)
+        //{
+        //    player.playerInput.Disable();
+        //}
 
 
         EventSystem.current.SetSelectedGameObject(firstSelected);
@@ -99,10 +97,10 @@ public class UI_InGame : MonoBehaviour
 
     private void UnpauseTheGame()
     {
-        foreach (var player in playerList)
-        {
-            player.playerInput.Enable();
-        }
+        //foreach (var player in playerList)
+        //{
+        //    player.playerInput.Enable();
+        //}
 
         isPaused = false;
         Time.timeScale = 1;

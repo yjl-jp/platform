@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -329,7 +329,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &3574195766951587305
 Rigidbody2D:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -340,8 +340,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_GravityScale: 4.5
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -405,6 +405,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fruitDrop: {fileID: 7903211317508286310, guid: 53c2f66533c54994da7ca7ca8208b649, type: 3}
   gameDifficulty: 3
+  joystick: {fileID: 0}
   moveSpeed: 8
   jumpForce: 14
   doubleJumpForce: 11
@@ -423,7 +424,7 @@ MonoBehaviour:
   enemyCheckRadius: 0.5
   whatIsEnemy:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 1088
   animators:
   - {fileID: 22100000, guid: 79886fd0d187089478291ad08b2663f9, type: 2}
   - {fileID: 22100000, guid: d982f12b72da97a49bc29db46768ca43, type: 2}

@@ -99,7 +99,6 @@ public class Trap_FallingPlatform : MonoBehaviour
             
     }
 
-    [System.Obsolete]
     private void SwitchOffPlatform()
     {
         anim.SetTrigger("deactivate");
@@ -107,6 +106,9 @@ public class Trap_FallingPlatform : MonoBehaviour
         canMove = false;
 
         //rb.isKinematic = false;
+        rb.bodyType = RigidbodyType2D.Dynamic;
+       
+           
         rb.gravityScale = 3.5f;
         rb.linearDamping = .5f;
 

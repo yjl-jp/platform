@@ -1,219 +1,150 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerManager : MonoBehaviour
 {
+    [Header("Player Spawning")]
+    public GameObject playerPrefab;
+    [SerializeField] private Transform respawnPoint;   // 在 Inspector 里拖 StartPoint 进来（推荐）
+
+    [Header("UI")]
+    public UI_JoinButton joingButton;
+    public List<GameObject> objectsToDisable;
+
+    // 事件（给摄像机等系统用）
     public static event Action OnPlayerRespawn;
     public static event Action OnPlayerDeath;
 
-    private LevelSplitscreenSetup splitscreenSetup;
-
-    public PlayerInputManager playerInputManager { get; private set; }
+    // 单例
     public static PlayerManager instance;
 
-    public List<GameObject> objectsToDisable;
-
+    // 玩家 & 生命
+    private List<Player> playerList = new List<Player>();
     public int lifePoints;
     public int maxPlayerCount = 1;
     public int playerCountWinCondition;
-    [Header("Player")]
-    [SerializeField] private List<Player> playerList = new List<Player>();
-    [SerializeField] private Transform respawnPoint;
-    [SerializeField] private string[] playerDevice;
 
     private void Awake()
     {
-        
-        playerInputManager = GetComponent<PlayerInputManager>();
-
         if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
-        else if (instance != this)
+        else
         {
             Destroy(this.gameObject);
-            return; 
         }
     }
 
-    private void OnEnable()
-    {
-        if (playerInputManager == null)
-            playerInputManager = GetComponent<PlayerInputManager>();
-
-        if (playerInputManager != null)
-        {
-            playerInputManager.onPlayerJoined += AddPlayer;
-            playerInputManager.onPlayerLeft += RemovePlayer;
-        }
-    }
-
-
-
-    private void OnDisable()
-    {
-        if (playerInputManager != null)
-        {
-            playerInputManager.onPlayerJoined -= AddPlayer;
-            playerInputManager.onPlayerLeft -= RemovePlayer;
-        }
-    }
-
-    public void SetupMaxPlayersCount(int newPlayersCount)
-    {
-        maxPlayerCount = newPlayersCount;
-        //playerInputManager.SetMaximumPlayerCount(maxPlayerCount);
-        if (playerList.Count >= maxPlayerCount)
-            playerInputManager.DisableJoining();
-        else
-            playerInputManager.EnableJoining();
-    }
-
+    // 关卡开始时调用一次（UI_InGame 那边已经在用）
     public void EnableJoinAndUpdateLifePoints()
     {
-        splitscreenSetup = FindFirstObjectByType<LevelSplitscreenSetup>();
-
-        playerInputManager.EnableJoining();
         playerCountWinCondition = maxPlayerCount;
         lifePoints = maxPlayerCount;
+
+        if (joingButton == null)
+            joingButton = FindFirstObjectByType<UI_JoinButton>();
+
         UI_InGame.instance.UpdateLifePointsUI(lifePoints, maxPlayerCount);
     }
 
-    private void AddPlayer(PlayerInput newPlayer)
+    // UI_JoinButton 调用
+    public void AddPlayer()
     {
-        
+        // 如果已经满员就不再生成
         if (playerList.Count >= maxPlayerCount)
-        {
-            playerInputManager.DisableJoining();
-            Destroy(newPlayer.gameObject);
             return;
-        }
 
-        Player playerScript = newPlayer.GetComponent<Player>();
+        // 生成玩家
+        GameObject newPlayerObj = Instantiate(playerPrefab);
+        Player newPlayer = newPlayerObj.GetComponent<Player>();
 
-        playerList.Add(playerScript);
-
-        OnPlayerRespawn?.Invoke();
+        // 先放到出生点
         PlaceNewPlayerAtRespawnPoint(newPlayer.transform);
 
-        int newPlayerNumber = GetPlayerNumber(newPlayer);
-        int newPlayerSkinId = SkinManager.instance.GetSkinId(newPlayerNumber);
+        // 加入列表（⚠️ 一定要在事件前做）
+        playerList.Add(newPlayer);
 
-        playerScript.UpdateSkin(newPlayerSkinId);
+        // 皮肤编号：0,1,2... 这样给
+        int newPlayerSkinId = SkinManager.instance.GetSkinId(playerList.Count - 1);
+        newPlayer.UpdateSkin(newPlayerSkinId);
 
-        foreach (GameObject gameObject in objectsToDisable)
+        // 首次加入时，把「按任意键加入」之类的文字隐藏
+        foreach (GameObject go in objectsToDisable)
         {
-            if (gameObject != null)
-                gameObject.SetActive(false);
+            if (go != null)
+                go.SetActive(false);
         }
 
-        if (playerInputManager.splitScreen == true)
-        {
-            newPlayer.camera = splitscreenSetup.mainCamera[newPlayerNumber];
-            splitscreenSetup.cinemachineCamera[newPlayerNumber].Follow = newPlayer.transform;
-        }
+        // 如果人数满了，就把加入按钮关掉
+        if (playerList.Count >= maxPlayerCount && joingButton != null)
+            joingButton.gameObject.SetActive(false);
+
+        // 通知其他系统（LevelCamera 会在这里刷新 Follow）
+        OnPlayerRespawn?.Invoke();
     }
 
-    private void RemovePlayer(PlayerInput player)
+    // 玩家死亡时由 Player 调用
+    public void RemovePlayer(Player player)
     {
-        Player playerScript = player.GetComponent<Player>();
-        playerList.Remove(playerScript);
+        // 从列表中移除
+        if (playerList.Contains(player))
+            playerList.Remove(player);
 
-
+        // 生命扣减逻辑（如果你暂时不想做多命，可以简化）
         if (CanRemoveLifePoints() && lifePoints > 0)
             lifePoints--;
 
-        if (lifePoints <= 0)
-        {
-            playerCountWinCondition--;
-            playerInputManager.DisableJoining();
+        UI_InGame.instance.UpdateLifePointsUI(lifePoints, maxPlayerCount);
 
-            if (playerList.Count <= 0)
-                GameManager.instance.RestartLevel();
-        }
+        // 允许再次加入
+        if (joingButton != null)
+            joingButton.gameObject.SetActive(true);
 
-        //UI_InGame.instance.UpdateLifePointsUI(lifePoints, maxPlayerCount);
-        if (UI_InGame.instance != null)
-        {
-            UI_InGame.instance.UpdateLifePointsUI(lifePoints, maxPlayerCount);
-        }
-
+        // 相机、别的系统更新
         OnPlayerDeath?.Invoke();
+
+        // 没命了就重开关卡
+        if (lifePoints <= 0)
+            GameManager.instance.RestartLevel();
     }
 
     private bool CanRemoveLifePoints()
     {
         if (DifficultyManager.instance.difficulty == DifficultyType.Hard)
-        {
             return true;
-        }
 
-
-        if (GameManager.instance.fruitsCollected <= 0 && DifficultyManager.instance.difficulty == DifficultyType.Normal)
-        {
+        if (GameManager.instance.fruitsCollected <= 0 &&
+            DifficultyManager.instance.difficulty == DifficultyType.Normal)
             return true;
-        }
 
         return false;
     }
 
-    private int GetPlayerNumber(PlayerInput newPlayer)
+    public List<Player> GetPlayerList()
     {
-        int newPlayerNumber = 0;
-
-        foreach (var device in newPlayer.devices)
-        {
-            for (int i = 0; i < playerDevice.Length; i++)
-            {
-                if (playerDevice[i] == "Empty")
-                {
-                    newPlayerNumber = i;
-                    playerDevice[i] = device.name;
-                    break;
-                }
-                else if (playerDevice[i] == device.name)
-                {
-                    newPlayerNumber = i;
-                    break;
-                }
-
-            }
-        }
-
-        return newPlayerNumber;
+        // 把已经 Destroy 的 Player 清掉
+        playerList.RemoveAll(p => p == null);
+        return playerList;
     }
 
-    public List<Player> GetPlayerList() => playerList;
-
     public void UpdateRespawnPosition(Transform newRespawnPoint) => respawnPoint = newRespawnPoint;
+
     private void PlaceNewPlayerAtRespawnPoint(Transform newPlayer)
     {
-        if (newPlayer == null)
-        {
-            Debug.LogError("PlaceNewPlayerAtRespawnPoint: newPlayer is null");
-            return;
-        }
-
         if (respawnPoint == null)
         {
-            var start = FindFirstObjectByType<StartPoint>();
-            if (start != null)
-            {
-                respawnPoint = start.transform;
-            }
-            else
-            {
-                Debug.LogError("PlaceNewPlayerAtRespawnPoint: StartPoint not found in scene.");
-                // ���ٷ���ԭ�㣬������� NRE
-                newPlayer.position = Vector3.zero;
-                return;
-            }
+            // 如果 Inspector 没拖，就自动在场景找 StartPoint
+            StartPoint startPoint = FindFirstObjectByType<StartPoint>();
+            if (startPoint != null)
+                respawnPoint = startPoint.transform;
         }
 
-        newPlayer.position = respawnPoint.position;
+        if (respawnPoint != null)
+            newPlayer.position = respawnPoint.position;
+        else
+            Debug.LogWarning("PlayerManager: 没找到 respawnPoint，玩家会在 (0,0) 生成。");
     }
 }

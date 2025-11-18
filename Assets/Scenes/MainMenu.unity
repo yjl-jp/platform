@@ -38,12 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -950,6 +950,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!1 &147793733
 GameObject:
   m_ObjectHideFlags: 0
@@ -15661,6 +15662,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerManager
       objectReference: {fileID: 0}
+    - target: {fileID: 3157022739382343375, guid: 0a7435744d6a79841a9ba1efe97a50e7, type: 3}
+      propertyPath: maxPlayerCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6433142757984546187, guid: 0a7435744d6a79841a9ba1efe97a50e7, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6433142757984546187, guid: 0a7435744d6a79841a9ba1efe97a50e7, type: 3}
       propertyPath: m_AllowJoining
       value: 0
@@ -16713,10 +16722,6 @@ MonoBehaviour:
   - skinName: Pink Man
     skinPrice: 50
     unlocked: 0
-  currentSkinIndex: 0
-  skinIndex: 00000000010000000200000003000000
-  maxPlayerIndex: 0
-  currentPlayerIndex: 0
   skinDisplay: {fileID: 703282601}
   buySelectText: {fileID: 1896485034}
   priceText: {fileID: 447919828}

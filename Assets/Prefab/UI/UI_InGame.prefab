@@ -846,11 +846,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6200281945430836404}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d1f1d1c75cfdbb4f88c47cc2df375fb, type: 3}
+  m_Script: {fileID: 11500000, guid: a54e474e05bc2e74cbd4c65136b9f2e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cycleDuration: 2
-  text: {fileID: 0}
+  text: {fileID: 2996015719530335123}
 --- !u!222 &6836037653518203932
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1725,7 +1725,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 262682383960478925, guid: 04a85c5342a90724e9f5bdf2c24356f1, type: 3}
       propertyPath: m_Color.a
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7965520960549696612, guid: 04a85c5342a90724e9f5bdf2c24356f1, type: 3}
       propertyPath: m_Name

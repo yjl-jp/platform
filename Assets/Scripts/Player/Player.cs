@@ -1,19 +1,21 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private GameObject fruitDrop;
     [SerializeField] private DifficultyType gameDifficulty;
+    [SerializeField] private Joystick joystick;
     private GameManager gameManager;
 
     private Rigidbody2D rb;
     private Animator anim;
     private CapsuleCollider2D cd;
 
-    public InputActionAsset playerInput { get; private set; }
+    //private Joystick joystick;//public InputActionAsset playerInput { get; private set; }
     private Vector2 moveInput;
 
 
@@ -71,7 +73,10 @@ public class Player : MonoBehaviour
         cd = GetComponent<CapsuleCollider2D>();
         anim = GetComponentInChildren<Animator>();
 
-        playerInput = GetComponent<PlayerInput>().actions;
+        //playerInput = GetComponent<PlayerInput>().actions;
+
+        if (joystick == null)                // 
+            joystick = FindFirstObjectByType<Joystick>();
     }
 
 
@@ -101,7 +106,7 @@ public class Player : MonoBehaviour
             return;
 
         HandleEnemyDetection();
-        //HandleInput();
+        HandleInput();
         HandleWallSlide();
         HandleMovement();
         HandleFlip();
@@ -224,6 +229,7 @@ public class Player : MonoBehaviour
     {
         AudioManager.instance.PlaySFX(0);
 
+        PlayerManager.instance.RemovePlayer(this);
         GameObject newDeathVfx = Instantiate(deathVfx,transform.position,Quaternion.identity);
         Destroy(gameObject);
     }
@@ -271,10 +277,10 @@ public class Player : MonoBehaviour
         AttemptBufferJump();
     }
 
-    private void HandleInput()
+    /*private void HandleInput()
     {
-        //xInput = Input.GetAxisRaw("Horizontal");
-        //yInput = Input.GetAxisRaw("Vertical");
+        //moveInput.x = joystick.Horizontal;
+        //moveInput.y = joystick.Vertical;
 
 
         //if (Input.GetKeyDown(KeyCode.Space))
@@ -282,7 +288,54 @@ public class Player : MonoBehaviour
         //    JumpButton();
         //    RequestBufferJump();
         //}
+        *//*if (joystick != null)
+        {
+            // 有虚拟摇杆 → 用摇杆
+            moveInput.x = joystick.Horizontal;
+            moveInput.y = joystick.Vertical;
+        }
+        else
+        {
+            // 没有虚拟摇杆 → 用键盘轴（PC）
+            moveInput.x = Input.GetAxisRaw("Horizontal");
+            moveInput.y = Input.GetAxisRaw("Vertical");
+        }*//*
+
+    }*/
+    private void HandleInput()
+    {
+        // 1. 移动输入：优先用屏幕摇杆，没有摇杆就用键盘
+        if (joystick != null)
+        {
+            moveInput.x = joystick.Horizontal;
+            moveInput.y = joystick.Vertical;
+        }
+        else
+        {
+            // 旧 Input 系统的轴，Editor / 键盘用这个就行
+            moveInput.x = Input.GetAxisRaw("Horizontal");
+            moveInput.y = Input.GetAxisRaw("Vertical");
+        }
+
+        // 2. 跳跃输入：键盘 Space 或 手柄 A（Button South）
+        bool jumpPressed = false;
+
+        // 键盘
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+            jumpPressed = true;
+
+        // 手柄（Xbox A / PS ×）
+        if (Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)
+            jumpPressed = true;
+
+        // 3. 触发跳跃逻辑
+        if (jumpPressed)
+        {
+            JumpButton();
+            RequestBufferJump();
+        }
     }
+
 
     #region Coyote & Buffer Jump
 
@@ -428,34 +481,30 @@ public class Player : MonoBehaviour
 
     private void OnEnable()
     {
-        playerInput.Enable();
 
-        playerInput.FindAction("Jump").performed += OnJumpPerformed;
-        playerInput.FindAction("Movement").performed += OnMovementPerformed;
-        playerInput.FindAction("Movement").canceled += OnMovementCanceled;
+        
+        joystick = FindAnyObjectByType<Joystick>();
+        UI_InGame.OnJumpPressed += JumpPerformed;
+
     }
 
 
     private void OnDisable()
     {
-        playerInput.Disable();
-
-        playerInput.FindAction("Jump").performed -= OnJumpPerformed;
-        playerInput.FindAction("Movement").performed -= OnMovementPerformed;
-        playerInput.FindAction("Movement").canceled -= OnMovementCanceled;
+        UI_InGame.OnJumpPressed -= JumpPerformed;
     }
 
-    private void OnMovementCanceled(InputAction.CallbackContext context)
-    {
-        moveInput = Vector2.zero;
-    }
+    //private void OnMovementCanceled(InputAction.CallbackContext context)
+    //{
+    //    moveInput = Vector2.zero;
+    //}
 
-    private void OnMovementPerformed(InputAction.CallbackContext context)
-    {
-        moveInput = context.ReadValue<Vector2>();
-    }
+    //private void OnMovementPerformed(InputAction.CallbackContext context)
+    //{
+    //    moveInput = context.ReadValue<Vector2>();
+    //}
 
-    private void OnJumpPerformed(InputAction.CallbackContext context)
+    public void JumpPerformed()//(InputAction.CallbackContext context)
     {
         JumpButton();
         AttemptBufferJump();

@@ -117,9 +117,9 @@ public class UI_MainMenu : MonoBehaviour
 
     public void QuiteButton()
     {
-        if (EditorApplication.isPlaying)
-            EditorApplication.isPlaying = false;
-        else
+        //if (EditorApplication.isPlaying)
+        //    EditorApplication.isPlaying = false;
+        //else
             Application.Quit();
     }
 }

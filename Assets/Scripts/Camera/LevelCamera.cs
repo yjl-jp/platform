@@ -29,7 +29,10 @@ public class LevelCamera : MonoBehaviour
         InvokeRepeating(nameof(UpdateCenterPointPosition), 0, .1f);
         //EnableCamera(false);
     }
-
+    private void Start()
+    {
+        UpdateCameraStatus();     // 
+    }
 
     private void Update()
     {
@@ -44,8 +47,19 @@ public class LevelCamera : MonoBehaviour
     {
         playerList = PlayerManager.instance.GetPlayerList();
 
+        // 
+        if (playerList == null || playerList.Count == 0)
+        {
+            cameraFocusedOnCenter = false;
+            EnableCamera(false);            // 
+            return;
+        }
+
+        EnableCamera(true);                 // 
+
         if (playerList.Count > 1)
         {
+            // 
             SetNewTarget(cameraCenterPoint);
 
             player1 = playerList[0].transform;
@@ -54,10 +68,12 @@ public class LevelCamera : MonoBehaviour
         }
         else
         {
+            // 
             cameraFocusedOnCenter = false;
             SetNewTarget(playerList[0].transform);
         }
     }
+
 
     public void UpdateCenterPointPosition()
     {
