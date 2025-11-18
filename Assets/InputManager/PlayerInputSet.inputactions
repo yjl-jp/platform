@@ -1,5 +1,5 @@
 {
-    "name": "PlayerInput",
+    "name": "PlayerInputSet",
     "maps": [
         {
             "name": "Player",
@@ -24,9 +24,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Pause",
+                    "name": "JoinGame",
                     "type": "Button",
-                    "id": "bb1ef087-42a4-4f16-968d-d99ef2d0af85",
+                    "id": "dc61a255-90ca-431e-8d49-cc25a51bee86",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -179,23 +179,23 @@
                 },
                 {
                     "name": "",
-                    "id": "bafe104a-f25e-4e71-b9a9-2077f55340c6",
-                    "path": "<Keyboard>/escape",
+                    "id": "95b6cc97-7cd1-4e7a-8651-3e0f4c04bd82",
+                    "path": "<Keyboard>/anyKey",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard",
-                    "action": "Pause",
+                    "action": "JoinGame",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "7fdf0693-7dfb-487d-847b-aba93389f0e7",
+                    "id": "1b6a753b-7f97-4c9b-ad12-872e519556d9",
                     "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Pause",
+                    "groups": "",
+                    "action": "JoinGame",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -228,7 +228,7 @@
                 {
                     "name": "",
                     "id": "bc1dc103-6c3b-4f7c-996d-1957d684a779",
-                    "path": "<Gamepad>/start",
+                    "path": "<Gamepad>/select",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",

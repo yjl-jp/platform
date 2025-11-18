@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,22 +20,28 @@ public class UI_SkinSelection : MonoBehaviour
     private DefaultInputActions defaultInput;
     private UI_LevelSelection levelSelectionUI;
     private UI_MainMenu mainMenuUI;
+
+    [Header("UI Skin Details")]
     [SerializeField] private Skin[] skinList;
+    private int currentSkinIndex;
+    private List<int> skinIndex;
+
+    private int maxPlayerIndex;
+    private int currentPlayerIndex;
 
     [Header("UI details")]
-    [SerializeField] private int skinIndex;
-    [SerializeField] private int maxIndex;
     [SerializeField] private Animator skinDisplay;
-
     [SerializeField] private TextMeshProUGUI buySelectText;
     [SerializeField] private TextMeshProUGUI priceText;
     [SerializeField] private TextMeshProUGUI bankText;
+    [SerializeField] private TextMeshProUGUI playerNumberText;
 
     [Space]
     [SerializeField] private float inputCooldown = .1f;
     private float lastTimeInput;
     private void Awake()
     {
+        ResetSkinChoices();
         LoadSkinUnlocks();
         UpdateSkinDisplay();
 
@@ -45,6 +52,9 @@ public class UI_SkinSelection : MonoBehaviour
 
     private void OnEnable()
     {
+        ResetSkinChoices();
+        UpdateSkinDisplay();
+
         defaultInput.Enable();
         mainMenuUI.UpdateLastSelected(firstSelected);
         EventSystem.current.SetSelectedGameObject(firstSelected);
@@ -71,6 +81,19 @@ public class UI_SkinSelection : MonoBehaviour
             NextSkin();
     }
 
+    private void ResetSkinChoices()
+    {
+        maxPlayerIndex = PlayerManager.instance.maxPlayerCount - 1;
+        currentPlayerIndex = 0;
+        currentSkinIndex = 0;
+        skinIndex = new List<int>();
+
+        for (int i = 0; i < skinList.Length; i++)
+        {
+            skinIndex.Add(i);
+        }
+    }
+
     private void LoadSkinUnlocks()
     {
         for (int i = 0; i < skinList.Length; i++)
@@ -83,14 +106,13 @@ public class UI_SkinSelection : MonoBehaviour
         }
     }
 
-    public void SelectSkin()
+    public void SelectSkinButton()
     {
-        if (skinList[skinIndex].unlocked == false)
-            BuySkin(skinIndex);
+        if (skinList[currentSkinIndex].unlocked == false)
+            BuySkin(currentSkinIndex);
         else
         {
-            SkinManager.instance.SetSkinId(skinIndex);
-            mainMenuUI.SwitchUI(levelSelectionUI.gameObject);
+            SelectSkin();
         }
 
         AudioManager.instance.PlaySFX(4);
@@ -98,13 +120,30 @@ public class UI_SkinSelection : MonoBehaviour
         UpdateSkinDisplay();
     }
 
+    private void SelectSkin()
+    {
+        int selectedSkinIndex = skinIndex[currentSkinIndex];
+
+        if (currentPlayerIndex < maxPlayerIndex)
+        {
+            SkinManager.instance.SetSkinId(selectedSkinIndex, currentPlayerIndex);
+            skinIndex.Remove(currentSkinIndex);
+            currentPlayerIndex++;
+        }
+        else
+        {
+            SkinManager.instance.SetSkinId(selectedSkinIndex, currentPlayerIndex);
+            mainMenuUI.SwitchUI(levelSelectionUI.gameObject);
+        }
+    }
+
     public void NextSkin()
     {
         lastTimeInput = Time.time;
-        skinIndex++;
+        currentSkinIndex++;
 
-        if (skinIndex > maxIndex)
-            skinIndex = 0;
+        if (currentSkinIndex > skinIndex.Count - 1)
+            currentSkinIndex = 0;
 
         AudioManager.instance.PlaySFX(4);
 
@@ -114,10 +153,10 @@ public class UI_SkinSelection : MonoBehaviour
     public void PreviousSkin()
     {
         lastTimeInput = Time.time;
-        skinIndex--;
+        currentSkinIndex--;
 
-        if (skinIndex < 0)
-            skinIndex = maxIndex;
+        if (currentSkinIndex < 0)
+            currentSkinIndex = skinIndex.Count - 1;
 
         AudioManager.instance.PlaySFX(4);
 
@@ -127,16 +166,19 @@ public class UI_SkinSelection : MonoBehaviour
     private void UpdateSkinDisplay()
     {
         bankText.text = "Bank: " + FruitsInBank();
+        playerNumberText.text = (currentPlayerIndex + 1) + " Player";
 
         for (int i = 0; i < skinDisplay.layerCount; i++)
         {
             skinDisplay.SetLayerWeight(i, 0);
         }
 
-        skinDisplay.SetLayerWeight(skinIndex, 1);
+        int selectedSkinIndex = skinIndex[currentSkinIndex];
+
+        skinDisplay.SetLayerWeight(selectedSkinIndex, 1);
 
 
-        if (skinList[skinIndex].unlocked)
+        if (skinList[selectedSkinIndex].unlocked)
         {
             priceText.transform.parent.gameObject.SetActive(false);
             buySelectText.text = "Select";
@@ -144,11 +186,10 @@ public class UI_SkinSelection : MonoBehaviour
         else
         {
             priceText.transform.parent.gameObject.SetActive(true);
-            priceText.text = "Price: " + skinList[skinIndex].skinPrice;
+            priceText.text = "Price: " + skinList[selectedSkinIndex].skinPrice;
             buySelectText.text = "Buy";
 
         }
-
     }
 
     private void BuySkin(int index)
@@ -163,8 +204,8 @@ public class UI_SkinSelection : MonoBehaviour
 
 
         AudioManager.instance.PlaySFX(10);
-        string skinName = skinList[skinIndex].skinName;
-        skinList[skinIndex].unlocked = true;
+        string skinName = skinList[currentSkinIndex].skinName;
+        skinList[currentSkinIndex].unlocked = true;
 
         PlayerPrefs.SetInt(skinName + "Unlocked", 1);
     }

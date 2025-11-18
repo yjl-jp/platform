@@ -12,7 +12,6 @@ public class DeadZone : MonoBehaviour
         {
             player.Damage();
             player.Die();
-            PlayerManager.instance.RespawnPlayer();
         }
 
         Enemy enemy = collision.gameObject.GetComponent<Enemy>();
