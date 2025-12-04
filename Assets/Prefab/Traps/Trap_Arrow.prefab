@@ -54,7 +54,6 @@ SpriteRenderer:
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -164,6 +163,6 @@ MonoBehaviour:
   duration: 0.5
   cooldown: 1.5
   rotationRight: 1
-  rotationSpeed: 0
+  rotationSpeed: 120
   scaleUpSpeed: 10
   targetScale: {x: 1.5, y: 1.5, z: 1.5}

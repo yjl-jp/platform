@@ -107,8 +107,6 @@ public class Trap_FallingPlatform : MonoBehaviour
 
         //rb.isKinematic = false;
         rb.bodyType = RigidbodyType2D.Dynamic;
-       
-           
         rb.gravityScale = 3.5f;
         rb.linearDamping = .5f;
 
